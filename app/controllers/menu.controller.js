@@ -1,4 +1,5 @@
 const Menu = require('../models/menu.model.js');
+var  numberofDocs;
 
 exports.create = (req, res) => {
     // Validate request
@@ -7,31 +8,35 @@ exports.create = (req, res) => {
             message: "Menu name can not be empty"
         });
     }
+    var total;
+    Menu.count().exec(function (err, count) {
+        total = count;
+    });
+
+    setTimeout( function() {
 
     // Create a Menu
     var menu = new Menu({
-        Category:req.body.Category,
-       // ID :   req.body.ID,
+        Category: req.body.Category,
+        ID: total + 1,
         Name: req.body.Name,
         Unitprice: req.body.Unitprice,
-        Calories : req.body.Calories,
+        Calories: req.body.Calories,
         Preparationtime: req.body.Preparationtime
     });
 
-    Menu.find().exec(function (err, results) {
-        var count = results.length
-        menu.ID = count+1;
-    });
+    //console.log(menu);
 
-    // Save Menu in the database
-    menu.save()
-        .then(data => {
-        res.send(data);
-}).catch(err => {
-        res.status(500).send({
-        message: err.message || "Some error occurred while creating the Menu Item."
+        // Save Menu in the database
+        menu.save()
+            .then(data => {
+            res.send(data);
+    }).catch(err => {
+            res.status(500).send({
+            message: err.message || "Some error occurred while creating the Menu Item."
+        });
     });
-});
+    },1500);
 };
 
 exports.findAll = (req, res) => {
