@@ -35,7 +35,12 @@ require('./app/routes/cart.routes.js')(app);
 require('./app/routes/order.routes.js')(app);
 require('./app/routes/orderlist.routes.js')(app);
 
-// listen for requests
-app.listen(process.env.PORT ||3000, () => {
-    console.log("Server is listening on port 3000");
+app.set('port', (process.env.PORT || 3000));
+
+//For avoidong Heroku $PORT error
+app.get('/', function(request, response) {
+    var result = 'App is running'
+    response.send(result);
+}).listen(app.get('port'), function() {
+    console.log('App is running, server is listening on port ', app.get('port'));
 });
