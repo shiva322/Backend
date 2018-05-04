@@ -35,7 +35,7 @@ require('./app/routes/cart.routes.js')(app);
 require('./app/routes/order.routes.js')(app);
 require('./app/routes/orderlist.routes.js')(app);
 
-
+app.set('port', (process.env.PORT || 3000));
 // listen for requests
 app.listen(3000, () => {
     console.log("Server is listening on port 3000");
