@@ -1,0 +1,26 @@
+{
+  "name": "backendscript-for-mobileapp",
+  "version": "1.0.0",
+  "description": "backend api calls for mobile app",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "Express",
+    "RestAPI",
+    "MongoDB",
+    "Mongoose"
+  ],
+  "author": "Nikhitha",
+  "license": "MIT",
+  "dependencies": {
+    "body-parser": "^1.18.2",
+    "express": "^4.16.3",
+    "mongoose": "^5.0.16"
+  },
+  "engines": {
+    "node": "8.9.3",
+    "npm": "5.5.1"
+  }
+}
