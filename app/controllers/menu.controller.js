@@ -9,13 +9,18 @@ exports.create = (req, res) => {
     }
 
     // Create a Menu
-    const menu = new Menu({
+    var menu = new Menu({
         Category:req.body.Category,
-        ID : req.body.ID,
+       // ID :   req.body.ID,
         Name: req.body.Name,
         Unitprice: req.body.Unitprice,
         Calories : req.body.Calories,
         Preparationtime: req.body.Preparationtime
+    });
+
+    Menu.find().exec(function (err, results) {
+        var count = results.length
+        menu.ID = count+1;
     });
 
     // Save Menu in the database
