@@ -5,7 +5,9 @@ module.exports = (app) => {
     app.post('/menu', menus.create);
 
     // Retrieve all Menu Items
-    app.get('/menu', menus.findAll);
+    app.get('/menu/:categoryName', menus.findAll);
+
+
 
     // Retrieve a single Menu with MenuId
     app.get('/menu/:menuId', menus.findOne);

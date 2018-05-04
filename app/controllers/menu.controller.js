@@ -20,66 +20,66 @@ exports.create = (req, res) => {
 
     // Save Menu in the database
     menu.save()
-    .then(data => {
+        .then(data => {
         res.send(data);
-    }).catch(err => {
+}).catch(err => {
         res.status(500).send({
-            message: err.message || "Some error occurred while creating the Menu Item."
-        });
+        message: err.message || "Some error occurred while creating the Menu Item."
     });
+});
 };
 
 exports.findAll = (req, res) => {
-    Menu.find()
-    .then(menus => {
+    Menu.find({Category:req.params.categoryName})
+        .then(menus => {
         res.send(menus);
-    }).catch(err => {
+}).catch(err => {
         res.status(500).send({
-            message: err.message || "Some error occurred while retrieving menu items."
-        });
+        message: err.message || "Some error occurred while retrieving menu items."
     });
+});
 };
 
 
 exports.findOne = (req, res) => {
     Menu.find({ID:req.params.menuId})
-    .then(menu => {
+        .then(menu => {
         if(menu=="") {
-            return res.status(404).send({
-                message: "Menu Item not found with id " + req.params.menuId
-            });            
-        }
-        res.send(menu[0]);
-    }).catch(err => {
-        if(err.kind === 'ObjectId') {
-            return res.status(404).send({
-                message: "Menu Item not found with id " + req.params.menuId
-            });                
-        }
-        return res.status(500).send({
-            message: "Error retrieving menu item with id " + req.params.menuId
+        return res.status(404).send({
+            message: "Menu Item not found with id " + req.params.menuId
         });
+    }
+    res.send(menu[0]);
+}).catch(err => {
+        if(err.kind === 'ObjectId') {
+        return res.status(404).send({
+            message: "Menu Item not found with id " + req.params.menuId
+        });
+    }
+    return res.status(500).send({
+        message: "Error retrieving menu item with id " + req.params.menuId
     });
+});
 };
 
 
 exports.delete = (req, res) => {
     Menu.find({ID:req.params.menuId}).remove().exec()
-    .then(menu => {
+        .then(menu => {
         if(!menu) {
-            return res.status(404).send({
-                message: "Menu item not found with id " + req.params.menuId
-            });
-        }
-        res.send({message: "Menu item deleted successfully!"});
-    }).catch(err => {
-        if(err.kind === 'ObjectId' || err.name === 'NotFound') {
-            return res.status(404).send({
-                message: "Menu item not found with id " + req.params.menuId
-            });                
-        }
-        return res.status(500).send({
-            message: "Could not delete Menu with id " + req.params.menuId
+        return res.status(404).send({
+            message: "Menu item not found with id " + req.params.menuId
         });
+    }
+    res.send({message: "Menu item deleted successfully!"});
+}).catch(err => {
+        if(err.kind === 'ObjectId' || err.name === 'NotFound') {
+        return res.status(404).send({
+            message: "Menu item not found with id " + req.params.menuId
+        });
+    }
+    return res.status(500).send({
+        message: "Could not delete Menu with id " + req.params.menuId
     });
+});
 };
