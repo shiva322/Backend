@@ -11,8 +11,10 @@ exports.create = (req, res) => {
     // Create a Cart
     const cart = new Cart({
         User : req.body.User,
-        MenuID: req.body.MenuID,
-        Quantity: req.body.Quantity,
+        Items : [{
+            MenuID: req.body.MenuID,
+            Quantity: req.body.Quantity
+        }]
     });
 
     // Save Cart in the database
@@ -26,16 +28,36 @@ exports.create = (req, res) => {
     });
 };
 
-// exports.findAll = (req, res) => {
-//     Cart.find({User:req.params.User})
-//     .then(cart => {
-//         res.send(cart);
-//     }).catch(err => {
-//         res.status(500).send({
-//             message: err.message || "Some error occurred while retrieving Cart items."
-//         });
-//     });
-// };
+
+exports.update = (req, res) => {
+    // Validate request
+    if(!req.body.User) {
+        return res.status(400).send({
+            message: "User name can not be empty"
+        });
+    }
+
+
+
+    Cart.findOneAndUpdate({User:req.body.User},
+        {
+            $push : {
+                Items :  {
+                    MenuID: req.body.MenuID,
+                    Quantity: req.body.Quantity
+                }
+            }
+        },
+        { new: true })
+        .then(data => {
+        res.send(data);
+}).catch(err => {
+        res.status(500).send({
+        message: err.message || "Some error occurred while adding Cart Item."
+    });
+});
+
+};
 
 
 exports.findOne = (req, res) => {
@@ -59,6 +81,36 @@ exports.findOne = (req, res) => {
     });
 };
 
+//Favorite.update( {cn: req.params.name}, { $pullAll: {uid: [req.params.deleteUid] }
+
+exports.removeMenu = (req, res) => {
+    // Validate request
+    if(!req.params.User) {
+    return res.status(400).send({
+        message: "User name can not be empty"
+    });
+}
+
+
+
+Cart.findOneAndUpdate({User:req.params.User},
+    {
+        $pull : {
+            Items :  {
+                MenuID: req.params.MenuID
+            }
+        }
+    },
+    { new: true })
+    .then(data => {
+    res.send(data);
+}).catch(err => {
+    res.status(500).send({
+    message: err.message || "Some error occurred while adding Cart Item."
+});
+});
+
+};
 
 exports.delete = (req, res) => {
     Cart.find({User:req.params.User,MenuID:req.params.MenuID}).remove().exec()

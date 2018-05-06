@@ -25,6 +25,7 @@ mongoose.connect(dbConfig.url)
     process.exit();
 });
 
+
 // define a simple route
 app.get('/', (req, res) => {
     res.json({"message": "Welcome to app"});

@@ -10,12 +10,14 @@ exports.create = (req, res) => {
         });
     }
 
-    // Create a Menu
-    const order = new Order({
+    // Create a Order
+    var order = new Order({
         User:req.body.User,
-        OrderID:req.body.OrderID,
-        TimeSlot: new Date(req.body.TimeSlot),
+        //OrderID:req.body.OrderID,
+        TimeSlot: new Date(req.body.PickupTime),
     });
+
+
 
     // Save Order in the database
     order.save()
