@@ -1,4 +1,18 @@
 const Order = require('../models/order.model.js');
+var Moment = require('moment');
+
+/*
+var validatePickup = function (Date pickupTime,Number PrepTime) {
+    //Check pickupTime against existing orders times.nnpm i npm i pm i
+
+    var maxStartTime = moment(pickupTime).subtract('minutes',PrepTime); //req.params.startTime = 2016-09-25 00:00:00
+    //var startDate = moment(pickupTime).add('hours',7);
+    var minStartTime   = maxStartTime.subtract('hours',1); //req.params.endTime = 2016-09-25 01:00:00
+
+
+
+}
+*/
 
 exports.create = (req, res) => {
 
@@ -16,6 +30,7 @@ exports.create = (req, res) => {
         //OrderID:req.body.OrderID,
         TimeSlot: new Date(req.body.PickupTime),
     });
+
 
 
 

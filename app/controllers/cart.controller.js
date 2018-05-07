@@ -11,10 +11,7 @@ exports.create = (req, res) => {
     // Create a Cart
     const cart = new Cart({
         User : req.body.User,
-        Items : [{
-            MenuID: req.body.MenuID,
-            Quantity: req.body.Quantity
-        }]
+        Items : []
     });
 
     // Save Cart in the database
@@ -31,15 +28,13 @@ exports.create = (req, res) => {
 
 exports.update = (req, res) => {
     // Validate request
-    if(!req.body.User) {
+    if(!req.params.User) {
         return res.status(400).send({
             message: "User name can not be empty"
         });
     }
 
-
-
-    Cart.findOneAndUpdate({User:req.body.User},
+    Cart.findOneAndUpdate({User:req.params.User},
         {
             $push : {
                 Items :  {

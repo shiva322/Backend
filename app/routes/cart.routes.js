@@ -1,7 +1,7 @@
 module.exports = (app) => {
     const carts = require('../controllers/cart.controller.js');
 
-    app.put('/cart', carts.update);
+    app.put('/cart/:User', carts.update);
     // Create a new Cart Item
     app.post('/cart', carts.create);
 

@@ -2,6 +2,11 @@ const mongoose = require('mongoose');
 const autoIncrement = require('mongoose-auto-increment');
 const OrderSchema = mongoose.Schema({
 	User:String,
+    Items: [{
+        _id:false,
+        MenuID : Number,
+        Quantity:Number
+    }],
 	OrderID:Number,
 	PickupTime:Date,
 	FulfillmentStartTime:Date,
