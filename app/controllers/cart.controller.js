@@ -56,7 +56,7 @@ exports.update = (req, res) => {
 
 
 exports.findOne = (req, res) => {
-    Cart.find({User:req.params.User})
+    Cart.findOne({User:req.params.User})
     .then(cart => {
         if(!cart) {
             return res.status(404).send({
