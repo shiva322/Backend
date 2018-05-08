@@ -5,7 +5,12 @@ const CartSchema = mongoose.Schema({
 	Items: [{
         _id:false,
 		MenuID : Number,
-        Quantity:Number
+        Quantity:Number,
+        Name: String,
+        Unitprice: Number,
+        Calories : Number,
+        Preparationtime: Number,
+        Category:String
 		}]
 }, {
     timestamps: true

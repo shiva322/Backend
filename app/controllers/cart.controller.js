@@ -1,4 +1,5 @@
 const Cart = require('../models/cart.model.js');
+const Menu = require('../models/menu.model.js');
 
 exports.create = (req, res) => {
     // Validate request
@@ -38,7 +39,7 @@ exports.update = (req, res) => {
         {
             $push : {
                 Items :  {
-                    MenuID: req.body.MenuID,
+                    MenuID : req.body.MenuID,
                     Quantity: req.body.Quantity
                 }
             }
@@ -63,7 +64,17 @@ exports.findOne = (req, res) => {
                 message: "No user found " 
             });            
         }
+
+    Promise.all(cart.Items.map( function(item) {
+        return Menu.findOne({"ID":item.MenuID}).then( data => {
+                //console.log(item.Quantity);
+                data["Quantity"] = item.Quantity;
+                return data;
+        });
+    })).then(function(results) {
+        cart.Items = results;
         res.send(cart);
+    })
     }).catch(err => {
         if(err.kind === 'ObjectId') {
             return res.status(404).send({
@@ -75,8 +86,6 @@ exports.findOne = (req, res) => {
         });
     });
 };
-
-//Favorite.update( {cn: req.params.name}, { $pullAll: {uid: [req.params.deleteUid] }
 
 exports.removeMenu = (req, res) => {
     // Validate request
