@@ -6,6 +6,10 @@ module.exports = (app) => {
 
     // Retrieve all Menu Items
     app.get('/menu/:categoryName', menus.findAll);
+
+    // Retrieve all Menu Items sorted by Name/ Price
+    app.get('/menu/:categoryName/:sorttype', menus.sortBy);
+
     
     // Retrieve a single Menu with MenuId
     app.get('/menu/:menuId', menus.findOne);
