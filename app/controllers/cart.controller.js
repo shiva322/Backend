@@ -73,7 +73,7 @@ exports.findOne = (req, res) => {
         });
     })).then(function(results) {
         cart.Items = results;
-        res.send(cart);
+        res.send(cart.Items);
     })
     }).catch(err => {
         if(err.kind === 'ObjectId') {
