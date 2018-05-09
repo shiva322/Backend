@@ -36,7 +36,7 @@ var validatePickup = function (pickupTime,PrepTime) {
         }
 
         else {
-/*
+            /*
             var tempReadytime = moment(pickupTime);
             var tempFulltime = moment(pickupTime).subtract(PrepTime,'minutes');;
             temp.find({"FulfillmentStartTime": {"$gte": new Date(minFullStartTime.format("MM/DD/YY HH:mm:ss")), "$lte": pickupTime}});
@@ -67,8 +67,8 @@ var validatePickup = function (pickupTime,PrepTime) {
                 firstSlot = Math.round((data[i].FulfillmentStartTime.getTime() - minFullStartTime.toDate().getTime())/60000);
             }
         }
-        console.log(lastSlot);
-        console.log(firstSlot);
+        //console.log(lastSlot);
+        //console.log(firstSlot);
         //console.log(data);
 
         // assign last slot

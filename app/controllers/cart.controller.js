@@ -35,23 +35,95 @@ exports.update = (req, res) => {
         });
     }
 
-    Cart.findOneAndUpdate({User:req.params.User},
-        {
-            $push : {
-                Items :  {
-                    MenuID : req.body.MenuID,
-                    Quantity: req.body.Quantity
+    Cart.findOne().and([{User:req.params.User},{ "Items.MenuID":req.body.MenuID}]).exec().then(data=> {
+        if(data){
+
+                data.Items.forEach(function (item) {
+                    //console.log(item);
+                    if (item.MenuID === req.body.MenuID) {
+                        item.Quantity += req.body.Quantity;
+                    }
+                });
+
+                Cart.findOneAndUpdate({User: req.params.User}, data, {new: true}).exec().then(data_response => {
+                    res.send(data_response);
+                }).catch(err => {
+                    res.status(500).send({
+                        message: err.message || "Some error occurred while adding Cart Item."
+                        })
+                    });
                 }
-            }
-        },
-        { new: true })
-        .then(data => {
-        res.send(data);
+
+        else {
+
+            Cart.findOneAndUpdate({User:req.params.User},
+            {
+                $push : {
+                    Items :  {
+                        MenuID : req.body.MenuID,
+                        Quantity: req.body.Quantity
+                    }
+                }
+            },
+            { new: true })
+            .then(data => {
+            res.send(data);
 }).catch(err => {
         res.status(500).send({
         message: err.message || "Some error occurred while adding Cart Item."
     });
 });
+}
+});
+
+/*
+    Cart.findOne({User:req.params.User}).exec().then( data => {
+        //var pushNewFlag = true;
+            //console.log(data);
+            menuArray = data.Items.map(item => {return item.MenuID});
+            menuArray.forEach(function (item) {
+                console.log(item);
+            if(item===req.body.MenuID){
+                Cart.findOneAndUpdate({User:req.params.User},
+                    {
+                        $set : {
+                            Items :  {
+                                MenuID : req.body.MenuID,
+                                Quantity: req.body.Quantity
+                            }
+                        }
+                    },
+                    { new: true })
+                    .then(data => {
+                    res.send(data);
+            }).catch(err => {
+                    res.status(500).send({
+                    message: err.message || "Some error occurred while adding Cart Item."
+                });
+            });
+            }
+            /*  else {
+               /* Cart.findOneAndUpdate({User:req.params.User},
+                    {
+                        $push : {
+                            Items :  {
+                                MenuID : req.body.MenuID,
+                                Quantity: req.body.Quantity
+                            }
+                        }
+                    },
+                    { new: true })
+                    .then(data => {
+                    res.send(data);
+            }).catch(err => {
+                    res.status(500).send({
+                    message: err.message || "Some error occurred while adding Cart Item."
+                });
+            });
+            }
+        });
+    });
+*/
 
 };
 
@@ -61,8 +133,8 @@ exports.findOne = (req, res) => {
     .then(cart => {
         if(!cart) {
             return res.status(404).send({
-                message: "No user found " 
-            });            
+                message: "No user found "
+            });
         }
 
     Promise.all(cart.Items.map( function(item) {
@@ -78,11 +150,11 @@ exports.findOne = (req, res) => {
     }).catch(err => {
         if(err.kind === 'ObjectId') {
             return res.status(404).send({
-                message: "No user found " 
-            });                
+                message: "No user found "
+            });
         }
         return res.status(500).send({
-            message: "Error retrieving user " 
+            message: "Error retrieving user "
         });
     });
 };
@@ -121,7 +193,7 @@ exports.delete = (req, res) => {
     .then(cart => {
         if(!cart) {
             return res.status(404).send({
-                message: "User or Menu ID not found " 
+                message: "User or Menu ID not found "
             });
         }
         res.send({message: "Cart item deleted successfully!"});
@@ -129,7 +201,7 @@ exports.delete = (req, res) => {
         if(err.kind === 'ObjectId' || err.name === 'NotFound') {
             return res.status(404).send({
                 message: "User or Menu ID not found  "
-            });                
+            });
         }
         return res.status(500).send({
             message: "Could not delete item "
