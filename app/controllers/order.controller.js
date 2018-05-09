@@ -173,7 +173,12 @@ exports.create = (req, res) => {
 
     }
     else {
-            console.log("Error");
+        //order.FulfillmentStartTime = validated_data.FulfillmentStartTime;
+        //order.ReadyTime = validated_data.ReadyTime;
+        //order.PickupTime = validated_data.PickupTime;
+        order.Status = "SLOT_NOT_AVAILABLE";
+        res.send(order);
+           // console.log("Error");
     }
 
         //res.send(data);
