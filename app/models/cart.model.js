@@ -10,7 +10,8 @@ const CartSchema = mongoose.Schema({
         Unitprice: Number,
         Calories : Number,
         Preparationtime: Number,
-        Category:String
+        Category:String,
+        ID:String
 		}]
 }, {
     timestamps: true
