@@ -1,5 +1,7 @@
 const Cart = require('../models/cart.model.js');
 const Menu = require('../models/menu.model.js');
+var mailer = require("nodemailer");
+//var smtpTransport = require('nodemailer-smtp-transport');
 
 exports.create = (req, res) => {
     // Validate request
@@ -9,21 +11,78 @@ exports.create = (req, res) => {
         });
     }
 
-    // Create a Cart
-    const cart = new Cart({
-        User : req.body.User,
-        Items : []
-    });
 
-    // Save Cart in the database
-    cart.save()
-    .then(data => {
-        res.send(data);
-    }).catch(err => {
+    console.log(req.body.User);
+
+    Cart.findOne({User:req.body.User}).exec().then(data=> {
+        console.log(data);
+        if(data){
+            console.log("fds");
+            res.send("User Exists");
+
+        }
+        else
+        {
+                        // Use Smtp Protocol to send Email
+            var smtpTransport = mailer.createTransport({
+                service: "Gmail",
+                auth: {
+                    user: "cmpe277group@gmail.com",
+                    pass: "Jamjam@123"
+                }
+
+            });
+
+            var order_id = 1;
+            var receiver_email = req.body.User;
+            var mail = {
+                from: "CMPE 277 Restaurant<cmpe277group@gmail.com>",
+                to: req.body.User,
+                subject: "Welcome to Bay Leaf Restaurant",
+                text: "Please find the below order details",
+                html: "<b>Welcome to Bay Leaf Restaurant</b>"
+            }
+
+
+
+            smtpTransport.sendMail(mail, function(error, response){
+                if(error){
+                    console.log(error);
+                }else{
+                    console.log("Message sent: " + response.message);
+                }
+
+                smtpTransport.close();
+            });
+
+
+            // Create a Cart
+            const cart = new Cart({
+                User : req.body.User,
+                Items : []
+            });
+
+            // Save Cart in the database
+            cart.save()
+            .then(data => {
+                res.send(data);
+            }).catch(err => {
+                res.status(500).send({
+                    message: err.message || "Some error occurred while adding Cart Item."
+                });
+            });
+
+        }
+
+        
+
+}).catch(err => {
         res.status(500).send({
-            message: err.message || "Some error occurred while adding Cart Item."
-        });
+        message: err.message || "Some error occurred while adding Cart Item."
     });
+});
+
+    
 };
 
 
