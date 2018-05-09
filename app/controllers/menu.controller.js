@@ -69,7 +69,13 @@ var sorted = query.sort({"Unitprice":1})
 query.exec(function(error, docs){
   res.send(docs);
 });
+}
 
+else if(s=="Popularity"){
+var sorted = query.sort({"Popularity":1})
+query.exec(function(error, docs){
+  res.send(docs);
+});
 }
 
 };
