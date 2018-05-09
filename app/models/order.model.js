@@ -5,12 +5,18 @@ const OrderSchema = mongoose.Schema({
     Items: [{
         _id:false,
         MenuID : Number,
-        Quantity:Number
+        Quantity:Number,
+        Name: String,
+        Unitprice: Number,
+        Calories : Number,
+        Preparationtime: Number,
+        Category:String
     }],
 	OrderID:Number,
 	PickupTime:Date,
 	FulfillmentStartTime:Date,
-	ReadyTime:Date
+	ReadyTime:Date,
+    Status:String
 }, {
     timestamps: true
 });

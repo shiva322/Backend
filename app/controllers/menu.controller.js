@@ -54,7 +54,7 @@ exports.sortBy = (req, res) => {
 
     //db.getCollection('menus').find({Category:"Main Course"}).sort({Name:1})
 var query = Menu.find({Category:req.params.categoryName});
-console.log(req.params.sorttype);
+//console.log(req.params.sorttype);
 var s = req.params.sorttype;
 
 if(s=="Name"){
