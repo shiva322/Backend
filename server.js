@@ -1,5 +1,9 @@
 const express = require('express');
 const bodyParser = require('body-parser');
+var mailer = require("nodemailer");
+const order = require('./app/models/order.model.js');
+var moment = require('moment');
+
 
 // create express app
 const app = express();
@@ -25,6 +29,60 @@ mongoose.connect(dbConfig.url)
     process.exit();
 });
 
+
+function reminder(callback) {
+			
+		d1 = new Date();
+		d2 = moment(d1).add(10,'minutes').toDate();
+
+		console.log("Current Date:   ",d1);
+		console.log("Date + 10 min:  ",d2);
+
+		order.find({"PickupTime":{$gte:d1,$lte:d2}}).exec().then(data=> {
+			console.log("Data Found : ",data);
+
+			var smtpTransport = mailer.createTransport({
+                service: "Gmail",
+                auth: {
+                    user: "cmpe277group@gmail.com",
+                    pass: "Jamjam@123"
+                }
+
+            });
+		
+       		for (var i = 0; i < data.length; i++){
+
+	            var mail = {
+	                from: "CMPE 277 Restaurant<cmpe277group@gmail.com>",
+	                to: d[i].User,
+	                subject: "Bay Leaf Restaurant - Order Pickup Reminder",
+	                text: "Please find the below order details",
+	                html: "<b>Reminder from Bay Leaf to pickup your order.</b>"
+	            }
+
+	            smtpTransport.sendMail(mail, function(error, response){
+	                if(error){
+	                    console.log(error);
+	                }else{
+	                    console.log("Message sent: " + response.message);
+	                }
+
+	                smtpTransport.close();
+	            });
+				}
+			
+
+	});
+		callback();
+}
+
+function wait10min(){
+    setTimeout(function(){
+        reminder(wait10min);
+    }, 60000);
+}
+
+reminder(wait10min);
 
 // define a simple route
 app.get('/', (req, res) => {
