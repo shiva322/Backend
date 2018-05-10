@@ -19,6 +19,8 @@ var validatePickup = function (pickupTime,PrepTime) {
         "TotalPrepTime":PrepTime,
         "Status":"Failure"
     }
+    var startingDateTime = new Date(pickupTime.getFullYear(), pickupTime.getMonth(), pickupTime.getDate(), 5, 0, 0);
+    var closingDateTime = new Date(pickupTime.getFullYear(), pickupTime.getMonth(), pickupTime.getDate(), 21, 0, 0);
     var maxStartTime = moment(pickupTime).subtract(PrepTime,'minutes');
     var tempMaxStartTime =  maxStartTime.clone();
     var minFullStartTime   =  tempMaxStartTime.subtract(1, 'hours');
@@ -82,7 +84,7 @@ var validatePickup = function (pickupTime,PrepTime) {
         }
 
         data.sort(desc_sort);
-        console.log(data);
+        //console.log(data);
         data.forEach(function (item) {
             if(item.SlotTime && item.SlotTime>=PrepTime){
                 response.PickupTime = moment(pickupTime).format("MM/DD/YY HH:mm:ss");
@@ -110,7 +112,49 @@ var validatePickup = function (pickupTime,PrepTime) {
         //None satisfied then return error
 
         //console.log("error");
-        return response;
+
+
+        var afterOrdersQuery = sortedOrders.find({"FulfillmentStartTime": {"$gte": pickupTime}});
+        return afterOrdersQuery.exec().then(afterOrders => {
+            if(afterOrders.length>0){
+                for (var i = 0; i < afterOrders.length; i++){
+                    if(i===0){
+                         if(Math.round((pickupTime.getTime()-afterOrders[i].FulfillmentStartTime.getTime())/60000)>=PrepTime)
+                         {
+                             response.PickupTime = moment(pickupTime).add(PrepTime,'minutes').format("MM/DD/YY HH:mm:ss");
+                             response.Status = "SLOT_NOT_AVAILABLE";
+                             return response;
+                             break;
+                         }
+                    }
+                    if (i != afterOrders.length-1){
+                        if(Math.round((afterOrders[i+1].FulfillmentStartTime.getTime() - afterOrders[i].ReadyTime.getTime())/60000)>=PrepTime){
+                            response.PickupTime = moment(afterOrders[i].ReadyTime).add(PrepTime,'minutes').format("MM/DD/YY HH:mm:ss");
+                            response.Status = "SLOT_NOT_AVAILABLE";
+                            return response;
+                        };
+                    }
+
+                    if(i===afterOrders.length-1){
+                        if(Math.round((closingDateTime.getTime() - afterOrders[i].ReadyTime.getTime())/60000)>=PrepTime){
+                            response.PickupTime = moment(afterOrders[i].ReadyTime).add(PrepTime,'minutes').format("MM/DD/YY HH:mm:ss");
+                            response.Status = "SLOT_NOT_AVAILABLE";
+                            return response;
+                        }
+                    }
+                }
+            }
+            else {
+                // No after orders
+            response.PickupTime = moment(pickupTime).add(PrepTime,'minutes').format("MM/DD/YY HH:mm:ss");
+            response.Status = "SLOT_NOT_AVAILABLE";
+            return response;
+            }
+        }
+
+        )
+
+        //return response;
     }
     });
 
@@ -181,7 +225,7 @@ exports.create = (req, res) => {
     else {
         //order.FulfillmentStartTime = validated_data.FulfillmentStartTime;
         //order.ReadyTime = validated_data.ReadyTime;
-        //order.PickupTime = validated_data.PickupTime;
+        order.PickupTime = validated_data.PickupTime;
         order.Status = "SLOT_NOT_AVAILABLE";
         res.send(order);
            // console.log("Error");
@@ -196,7 +240,7 @@ exports.delete = (req, res) => {
     .then(order => {
         if(!order) {
             return res.status(404).send({
-                message: "Order or user not found" 
+                message: "Order or user not found"
             });
         }
         res.send({message: "Order deleted successfully!"});
@@ -204,7 +248,7 @@ exports.delete = (req, res) => {
         if(err.kind === 'ObjectId' || err.name === 'NotFound') {
             return res.status(404).send({
                 message: "Order or user not found"
-            });                
+            });
         }
         return res.status(500).send({
             message: "Could not delete Order"
