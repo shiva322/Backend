@@ -23,7 +23,7 @@ var validatePickup = function (pickupTime,PrepTime) {
     var minFullStartTime   =  tempMaxStartTime.subtract(1, 'hours');
     //console.log(minFullStartTime);
 
-    var sortedOrders = Order.find({User:"shiva"}).sort({"FulfillmentStartTime":1});
+    var sortedOrders = Order.find().sort({"FulfillmentStartTime":1});
 
     var temp = sortedOrders.find({"FulfillmentStartTime": {"$gte": new Date(minFullStartTime.format("MM/DD/YY HH:mm:ss")), "$lte": pickupTime}});
     return temp.exec().then(data => {
@@ -146,6 +146,7 @@ exports.create = (req, res) => {
     var totalPrepTime = reducedItem.Preparationtime;
     order.TotalPrepTime = totalPrepTime;
     console.log(totalPrepTime);*/
+    //console.log(new Date(req.body.PickupTime));
 
     validatePickup(new Date(req.body.PickupTime),totalPrepTime).then(validated_data=>{
 

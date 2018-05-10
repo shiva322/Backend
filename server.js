@@ -4,7 +4,6 @@ var mailer = require("nodemailer");
 const order = require('./app/models/order.model.js');
 var moment = require('moment');
 
-
 // create express app
 const app = express();
 
@@ -33,22 +32,22 @@ mongoose.connect(dbConfig.url)
 function reminder(callback) {
 			
 		d1 = new Date();
-		d2 = moment(d1).add(10,'minutes').toDate();
+		d2 = moment(d1).add(3,'minutes').toDate();
 
-		console.log("Current Date:   ",d1);
-		console.log("Date + 10 min:  ",d2);
+		//console.log("Current Date:   ",d1);
+		//console.log("Date + 10 min:  ",d2);
 
 		order.find({"PickupTime":{$gte:d1,$lte:d2}}).exec().then(data=> {
-			console.log("Data Found : ",data);
+			//console.log("Data: ",data);
 
+	     if(data.length>0) {
 			var smtpTransport = mailer.createTransport({
                 service: "Gmail",
                 auth: {
                     user: "cmpe277group@gmail.com",
                     pass: "Jamjam@123"
                 }
-
-            });
+			});
 		
        		for (var i = 0; i < data.length; i++){
 
@@ -66,23 +65,22 @@ function reminder(callback) {
 	                }else{
 	                    console.log("Message sent: " + response.message);
 	                }
-
 	                smtpTransport.close();
 	            });
 				}
-			
-
+    }
 	});
+
 		callback();
 }
 
-function wait10min(){
+function wait3min(){
     setTimeout(function(){
-        reminder(wait10min);
-    }, 60000);
+        reminder(wait3min);
+    }, 180000);
 }
 
-reminder(wait10min);
+reminder(wait3min);
 
 // define a simple route
 app.get('/', (req, res) => {

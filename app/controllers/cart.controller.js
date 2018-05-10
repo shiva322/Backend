@@ -11,7 +11,6 @@ exports.create = (req, res) => {
         });
     }
 
-
     console.log(req.body.User);
 
     Cart.findOne({User:req.body.User}).exec().then(data=> {
@@ -19,7 +18,6 @@ exports.create = (req, res) => {
         if(data){
             console.log("fds");
             res.send("User Exists");
-
         }
         else
         {
@@ -31,7 +29,7 @@ exports.create = (req, res) => {
                     pass: "Jamjam@123"
                 }
 
-            });
+     });
 
             var order_id = 1;
             var receiver_email = req.body.User;
@@ -96,7 +94,6 @@ exports.update = (req, res) => {
 
     Cart.findOne().and([{User:req.params.User},{ "Items.MenuID":req.body.MenuID}]).exec().then(data=> {
         if(data){
-
                 data.Items.forEach(function (item) {
                     //console.log(item);
                     if (item.MenuID === req.body.MenuID) {
