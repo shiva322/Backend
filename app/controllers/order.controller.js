@@ -1,6 +1,10 @@
 const Order = require('../models/order.model.js');
 const Cart = require('../models/cart.model.js');
 var moment = require('moment');
+var nodemailer = require('nodemailer');
+var ejs = require("ejs");
+var sendMailTransport = require('nodemailer-smtp-transport');
+var mailer = require("nodemailer");
 
 function asc_sort(a, b) {
     return (a.FulfillmentStartTime).getTime() - (b.FulfillmentStartTime).getTime();
@@ -104,6 +108,9 @@ var validatePickup = function (pickupTime,PrepTime) {
             var tempLocal =  minFullStartTime.clone();
             response.ReadyTime = tempLocal.add(PrepTime,'minutes').format("MM/DD/YY HH:mm:ss");*/
             response.Status = "PLACED";
+
+  
+
             return response;
         }
 
@@ -166,6 +173,40 @@ exports.create = (req, res) => {
 
         Cart.update({User:req.body.User}, { $set: { Items: [] }}).exec();
 
+
+             // Use Smtp Protocol to send Email
+            var smtpTransport = mailer.createTransport({
+                service: "Gmail",
+                auth: {
+                    user: "cmpe277group@gmail.com",
+                    pass: "Jamjam@123"
+                }
+
+              });
+
+
+            ejs.renderFile("./app/views/OrderPlaced.ejs", {User: req.body.User,Items:order.Items}, function (err, data) {
+            if (err) {
+                console.log(err);
+            } else {
+                var mainOptions = {
+                    from: "CMPE 277 Restaurant<cmpe277group@gmail.com>",
+                    to: req.body.User,
+                    subject: "Order Placed at Bay Leaf Restaurant",
+                    text: "Please find the below order details",
+                    html:data
+                };
+                console.log("html data ======================>", mainOptions.html);
+                smtpTransport.sendMail(mainOptions, function (err, info) {
+                    if (err) {
+                        console.log(err);
+                    } else {
+                        console.log('Message sent: ' + info.response);
+                    }
+                });
+            }
+
+            });
         // Save Order in the database
         order.save()
             .then(data => {

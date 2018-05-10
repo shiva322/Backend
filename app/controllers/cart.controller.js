@@ -1,5 +1,9 @@
 const Cart = require('../models/cart.model.js');
 const Menu = require('../models/menu.model.js');
+var nodemailer = require('nodemailer');
+var ejs = require("ejs");
+var sendMailTransport = require('nodemailer-smtp-transport');
+ 
 var mailer = require("nodemailer");
 //var smtpTransport = require('nodemailer-smtp-transport');
 
@@ -21,7 +25,10 @@ exports.create = (req, res) => {
         }
         else
         {
-                        // Use Smtp Protocol to send Email
+
+        
+
+            // Use Smtp Protocol to send Email
             var smtpTransport = mailer.createTransport({
                 service: "Gmail",
                 auth: {
@@ -29,29 +36,54 @@ exports.create = (req, res) => {
                     pass: "Jamjam@123"
                 }
 
-     });
+              });
 
-            var order_id = 1;
-            var receiver_email = req.body.User;
-            var mail = {
-                from: "CMPE 277 Restaurant<cmpe277group@gmail.com>",
-                to: req.body.User,
-                subject: "Welcome to Bay Leaf Restaurant",
-                text: "Please find the below order details",
-                html: "<b>Welcome to Bay Leaf Restaurant</b>"
+
+            ejs.renderFile("./app/views/Welcome.ejs", {User: req.body.User }, function (err, data) {
+            if (err) {
+                console.log(err);
+            } else {
+                var mainOptions = {
+                    from: "CMPE 277 Restaurant<cmpe277group@gmail.com>",
+                    to: req.body.User,
+                    subject: "Welcome to Bay Leaf Restaurant",
+                    text: "Please find the below order details",
+                    html:data
+                };
+                console.log("html data ======================>", mainOptions.html);
+                smtpTransport.sendMail(mainOptions, function (err, info) {
+                    if (err) {
+                        console.log(err);
+                    } else {
+                        console.log('Message sent: ' + info.response);
+                    }
+                });
             }
 
-
-
-            smtpTransport.sendMail(mail, function(error, response){
-                if(error){
-                    console.log(error);
-                }else{
-                    console.log("Message sent: " + response.message);
-                }
-
-                smtpTransport.close();
             });
+
+            // var order_id = 1;
+            // var receiver_email = req.body.User;
+            // var mail = {
+            //     from: "CMPE 277 Restaurant<cmpe277group@gmail.com>",
+            //     to: req.body.User,
+            //     subject: "Welcome to Bay Leaf Restaurant",
+            //     text: "Please find the below order details",
+            //     html:'../views/Welcome.html'
+            //     //html: "<b>Welcome to Bay Leaf Restaurant ${req.body.User}</b>"
+            // }
+
+
+
+            // smtpTransport.sendMail(mail, function(error, response){
+            //     if(error){
+            //         console.log(error);
+            //     }else{
+            //         console.log("Message sent: " + response.message);
+            //     }
+
+            //     smtpTransport.close();
+            // });
 
 
             // Create a Cart

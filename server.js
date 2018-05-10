@@ -3,6 +3,8 @@ const bodyParser = require('body-parser');
 var mailer = require("nodemailer");
 const order = require('./app/models/order.model.js');
 var moment = require('moment');
+var ejs = require("ejs");
+
 
 // create express app
 const app = express();
@@ -51,24 +53,48 @@ function reminder(callback) {
 		
 
        		for (var i = 0; i < data.length; i++){
+			var receiver = data[i].User;
+			ejs.renderFile("./app/views/Reminder.ejs", {User: data[i].User, Order:data[i].OrderID }, function (err, data) {
+               
+            if (err) {
+                console.log(err);
+            } else {
+                var mainOptions = {
+                    from: "CMPE 277 Restaurant<cmpe277group@gmail.com>",
+                    to: receiver,
+                    subject: "Bay Leaf Restaurant - Order Pickup Reminder",
+                    text: "Please find the below order details",
+                    html:data
+                };
+                console.log("Reminder html data ======================>", mainOptions.html);
+                smtpTransport.sendMail(mainOptions, function (err, info) {
+                    if (err) {
+                        console.log(err);
+                    } else {
+                        console.log('Message sent: ' + info.response);
+                    }
+                });
+            }
 
-       			//console.log(data[i].User);
-	            var mail = {
-	                from: "CMPE 277 Restaurant<cmpe277group@gmail.com>",
-	                to: data[i].User,
-	                subject: "Bay Leaf Restaurant - Order Pickup Reminder",
-	                text: "Please find the below order details",
-	                html: "<b>Reminder from Bay Leaf to pickup your order.</b>"
-	            }
+            });
 
-	            smtpTransport.sendMail(mail, function(error, response){
-	                if(error){
-	                    console.log(error);
-	                }else{
-	                    console.log("Message sent: " + response.message);
-	                }
-	                smtpTransport.close();
-	            });
+       			// console.log(data[i].User);
+	         //    var mail = {
+	         //        from: "CMPE 277 Restaurant<cmpe277group@gmail.com>",
+	         //        to: data[i].User,
+	         //        subject: "Bay Leaf Restaurant - Order Pickup Reminder",
+	         //        text: "Please find the below order details",
+	         //        html: "<b>Reminder from Bay Leaf to pickup your order.</b><s> Your Order Id is '+data[i].User+'</s>"
+	         //    }
+
+	         //    smtpTransport.sendMail(mail, function(error, response){
+	         //        if(error){
+	         //            console.log(error);
+	         //        }else{
+	         //            console.log("Message sent: " + response.message);
+	         //        }
+	         //        smtpTransport.close();
+	         //    });
 				}
     }
 	});
