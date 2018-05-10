@@ -34,10 +34,10 @@ mongoose.connect(dbConfig.url)
 function reminder(callback) {
 			
 		d1 = new Date();
-		d2 = moment(d1).add(3,'minutes').toDate();
+		d2 = moment(d1).add(10,'minutes').toDate();
 
-		//console.log("Current Date:   ",d1);
-		//console.log("Date + 10 min:  ",d2);
+		console.log("Current Date:   ",d1);
+		console.log("Date + 10 min:  ",d2);
 
 		order.find({"PickupTime":{$gte:d1,$lte:d2}}).exec().then(data=> {
 			console.log("Data: ",data);
@@ -102,13 +102,13 @@ function reminder(callback) {
 		callback();
 }
 
-function wait3min(){
+function wait10min(){
     setTimeout(function(){
-        reminder(wait3min);
-    }, 180000);
+        reminder(wait10min);
+    }, 600000);
 }
 
-reminder(wait3min);
+reminder(wait10min);
 
 // define a simple route
 app.get('/', (req, res) => {
