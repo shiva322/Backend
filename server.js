@@ -76,13 +76,13 @@ function reminder(callback) {
 		callback();
 }
 
-function wait3min(){
+function wait10min(){
     setTimeout(function(){
-        reminder(wait3min);
-    }, 10000);
+        reminder(wait10min);
+    }, 600000);
 }
 
-reminder(wait3min);
+reminder(wait10min);
 
 // define a simple route
 app.get('/', (req, res) => {
