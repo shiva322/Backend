@@ -38,7 +38,7 @@ function reminder(callback) {
 		//console.log("Date + 10 min:  ",d2);
 
 		order.find({"PickupTime":{$gte:d1,$lte:d2}}).exec().then(data=> {
-			//console.log("Data: ",data);
+			console.log("Data: ",data);
 
 	     if(data.length>0) {
 			var smtpTransport = mailer.createTransport({
@@ -49,11 +49,13 @@ function reminder(callback) {
                 }
 			});
 		
+
        		for (var i = 0; i < data.length; i++){
 
+       			//console.log(data[i].User);
 	            var mail = {
 	                from: "CMPE 277 Restaurant<cmpe277group@gmail.com>",
-	                to: d[i].User,
+	                to: data[i].User,
 	                subject: "Bay Leaf Restaurant - Order Pickup Reminder",
 	                text: "Please find the below order details",
 	                html: "<b>Reminder from Bay Leaf to pickup your order.</b>"
