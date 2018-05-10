@@ -40,7 +40,7 @@ function reminder(callback) {
 		console.log("Date + 10 min:  ",d2);
 
 		order.find({"PickupTime":{$gte:d1,$lte:d2}}).exec().then(data=> {
-			console.log("Data: ",data);
+		console.log("Data: ",data);
 
 	     if(data.length>0) {
 			var smtpTransport = mailer.createTransport({
