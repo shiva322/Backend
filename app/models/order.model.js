@@ -12,6 +12,7 @@ const OrderSchema = mongoose.Schema({
         Preparationtime: Number,
         Category:String
     }],
+    TotalPrepTime:Number,
 	OrderID:Number,
 	PickupTime:Date,
 	FulfillmentStartTime:Date,

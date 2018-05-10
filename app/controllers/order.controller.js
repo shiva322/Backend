@@ -1,4 +1,5 @@
 const Order = require('../models/order.model.js');
+const Cart = require('../models/cart.model.js');
 var moment = require('moment');
 
 function asc_sort(a, b) {
@@ -133,8 +134,9 @@ exports.create = (req, res) => {
     order.Items.forEach(function(item){
             totalPrepTime += item.Preparationtime;
         }
-        )
+    )
 
+    order.TotalPrepTime = totalPrepTime;
 
     /*var reducedItem = order.Items.reduce(function(accumulator, currentValue, currentIndex, array) {
         //console.log("a" + accumulator.Preparationtime)
@@ -161,6 +163,9 @@ exports.create = (req, res) => {
         order.PickupTime = validated_data.PickupTime;
         order.Status = "PLACED";
         //console.log(order);
+
+        Cart.update({User:req.body.User}, { $set: { Items: [] }}).exec();
+
         // Save Order in the database
         order.save()
             .then(data => {
@@ -181,8 +186,6 @@ exports.create = (req, res) => {
         res.send(order);
            // console.log("Error");
     }
-
-        //res.send(data);
     });
 
 };
@@ -221,7 +224,7 @@ exports.findAll = (req, res) => {
         res.send(orders);
 }).catch(err => {
         res.status(500).send({
-        message: err.message || "Some error occurred while retrieving menu items."
+        message: err.message || "Some error occurred while retrieving Orders."
     });
 });
 };
