@@ -121,7 +121,7 @@ var validatePickup = function (pickupTime,PrepTime) {
         //console.log("error");
 
 
-        var afterOrdersQuery = sortedOrders.find({"FulfillmentStartTime": {"$gte": pickupTime}});
+        var afterOrdersQuery = sortedOrders.find({"FulfillmentStartTime": {"$gte": pickupTime,"$lte":closingDateTime}});
         return afterOrdersQuery.exec().then(afterOrders => {
             if(afterOrders.length>0){
                 for (var i = 0; i < afterOrders.length; i++){
@@ -150,6 +150,10 @@ var validatePickup = function (pickupTime,PrepTime) {
                         }
                     }
                 }
+
+            //response.Status = "NO_SLOT_TODAY";
+            //return response;
+
             }
             else {
                 // No after orders
@@ -183,7 +187,7 @@ exports.create = (req, res) => {
 
     var totalPrepTime = 0;
     order.Items.forEach(function(item){
-            totalPrepTime += item.Preparationtime;
+            totalPrepTime += item.Preparationtime*item.Quantity;
         }
     )
 
@@ -241,7 +245,7 @@ exports.create = (req, res) => {
                 var mainOptions = {
                     from: "CMPE 277 Restaurant<cmpe277group@gmail.com>",
                     to: req.body.User,
-                    subject: "Order Placed at Bay Leaf Restaurant",
+                    subject: "Order Confirmation at Bay Leaf Restaurant",
                     text: "Please find the below order details",
                     html:data
                 };
