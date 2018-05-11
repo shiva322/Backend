@@ -27,9 +27,18 @@ var validatePickup = function (pickupTime,PrepTime) {
     var closingDateTime = new Date(pickupTime.getFullYear(), pickupTime.getMonth(), pickupTime.getDate(), 21, 0, 0);
     var maxStartTime = moment(pickupTime).subtract(PrepTime,'minutes');
     var tempMaxStartTime =  maxStartTime.clone();
+    var CurDateTime = new Date();
     var minFullStartTime   =  tempMaxStartTime.subtract(1, 'hours');
     console.log(minFullStartTime);
     console.log(pickupTime);
+
+    if(CurDateTime.getTime()>minFullStartTime.toDate().getTime() && CurDateTime.getTime()>maxStartTime.toDate().getTime()){
+        response.Status = "SLOT_NOT_AVAILABLE";
+        return Promise.resolve(response);
+    }
+
+
+    else{
     var sortedOrders = Order.find().sort({"FulfillmentStartTime":1});
 
     var temp = sortedOrders.find({"FulfillmentStartTime": {"$gte": new Date(minFullStartTime.format("MM/DD/YY HH:mm:ss")), "$lte": pickupTime}});
@@ -181,6 +190,7 @@ var validatePickup = function (pickupTime,PrepTime) {
     }
     });
 
+    }
 }
 
 
