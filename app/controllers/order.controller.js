@@ -218,7 +218,12 @@ exports.create = (req, res) => {
         Cart.update({User:req.body.User}, { $set: { Items: [] }}).exec();
 
 
-             // Use Smtp Protocol to send Email
+             
+        // Save Order in the database
+        order.save()
+            .then(data => {
+
+                // Use Smtp Protocol to send Email
             var smtpTransport = mailer.createTransport({
                 service: "Gmail",
                 auth: {
@@ -229,7 +234,7 @@ exports.create = (req, res) => {
               });
 
 
-            ejs.renderFile("./app/views/OrderPlaced.ejs", {User: req.body.User,Items:order.Items}, function (err, data) {
+            ejs.renderFile("./app/views/OrderPlaced.ejs", {User: data.User,Order:data.OrderID,Items:data.Items}, function (err, data) {
             if (err) {
                 console.log(err);
             } else {
@@ -251,9 +256,8 @@ exports.create = (req, res) => {
             }
 
             });
-        // Save Order in the database
-        order.save()
-            .then(data => {
+
+
             res.send(data);
             }).
         catch(err => {
