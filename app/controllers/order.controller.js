@@ -28,18 +28,30 @@ var validatePickup = function (pickupTime,PrepTime) {
     var maxStartTime = moment(pickupTime).subtract(PrepTime,'minutes');
     var tempMaxStartTime =  maxStartTime.clone();
     var minFullStartTime   =  tempMaxStartTime.subtract(1, 'hours');
-    //console.log(minFullStartTime);
-
+    console.log(minFullStartTime);
+    console.log(pickupTime);
     var sortedOrders = Order.find().sort({"FulfillmentStartTime":1});
 
     var temp = sortedOrders.find({"FulfillmentStartTime": {"$gte": new Date(minFullStartTime.format("MM/DD/YY HH:mm:ss")), "$lte": pickupTime}});
     return temp.exec().then(data => {
+        //console.log(data);
         if(data.length===0){
+            var sortedOrdersLocal = Order.find().sort({"FulfillmentStartTime":1}).find({"ReadyTime": {"$lte": pickupTime}});
+
+            sortedOrdersLocal.exec().then(dataLocal =>{
+            if(dataLocal.length>0){
+                response.PickupTime = moment(pickupTime).add(PrepTime,'minutes').format("MM/DD/YY HH:mm:ss");
+                response.Status = "SLOT_NOT_AVAILABLE";
+                return response;
+            }
+    }
+    )
+
             response.PickupTime = moment(pickupTime).format("MM/DD/YY HH:mm:ss");
             response.ReadyTime = moment(pickupTime).format("MM/DD/YY HH:mm:ss");
             response.FulfillmentStartTime = maxStartTime.format("MM/DD/YY HH:mm:ss");
             response.Status = "PLACED";
-            return response
+            return response;
         }
 
         else {
