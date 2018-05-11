@@ -32,7 +32,7 @@ var validatePickup = function (pickupTime,PrepTime) {
     console.log(minFullStartTime);
     console.log(pickupTime);
 
-    if(CurDateTime.getTime()>minFullStartTime.toDate().getTime() && CurDateTime.getTime()>maxStartTime.toDate().getTime()){
+    if(CurDateTime.getTime()>maxStartTime.toDate().getTime() && CurDateTime.getTime()>minFullStartTime.toDate().getTime()){
         response.Status = "SLOT_NOT_AVAILABLE";
         return Promise.resolve(response);
     }
