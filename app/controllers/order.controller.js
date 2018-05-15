@@ -327,6 +327,36 @@ exports.delete = (req, res) => {
     });
 };
 
+
+
+exports.cancel = (req, res) => {
+    Order.findOneAndUpdate({OrderID:req.params.OrderID},{
+        $set: {
+            Status : "CANCELLED"
+            }
+        },{ new: true }).exec()
+        .then(order => {
+        if(!order) {
+        return res.status(404).send({
+            message: "Order not found"
+        });
+    }
+    res.send({message: "Order cancelled successfully!"});
+}).catch(err => {
+        if(err.kind === 'ObjectId' || err.name === 'NotFound') {
+        return res.status(404).send({
+            message: "Order or user not found"
+        });
+    }
+    return res.status(500).send({
+        message: "Could not delete Order"
+    });
+});
+};
+
+
+
+
 exports.findAll = (req, res) => {
 
     if(!req.params.User) {
