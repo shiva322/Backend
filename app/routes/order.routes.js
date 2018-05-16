@@ -16,5 +16,6 @@ module.exports = (app) => {
 
     app.post('/order/report', order.report);
     app.post('/order/report/:sorttype', order.sortBy);
+    app.get('/order/popularityreport/:categoryName', order.popularityReport)
 
 }

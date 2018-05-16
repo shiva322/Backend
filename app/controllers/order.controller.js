@@ -398,6 +398,15 @@ query.exec(function(error, docs){
 
 };
 
+exports.popularityReport = (req, res) => {
+    
+    var query = Menu.find({Category:req.params.categoryName});
+    var sorted = query.sort({"Popularity":-1})
+    query.exec(function(error, docs){
+        res.send(docs);
+    });
+};
+
 exports.findAll = (req, res) => {
 
     if(!req.params.User) {
