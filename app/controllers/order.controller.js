@@ -355,7 +355,17 @@ exports.cancel = (req, res) => {
 };
 
 
+exports.report = (req, res) => {
 
+    Order.find({"createdAt":{$gte:req.body.fromDate,$lte:req.body.toDate}})
+        .then(orders => {
+        res.send(orders);
+}).catch(err => {
+        res.status(500).send({
+        message: err.message || "Some error occurred while retrieving Orders."
+    });
+});
+};
 
 exports.findAll = (req, res) => {
 

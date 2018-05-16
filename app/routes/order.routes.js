@@ -13,4 +13,6 @@ module.exports = (app) => {
 
     // Retrieve a all orders for user
     app.get('/order/:User', order.findAll);
+
+    app.post('/order/report', order.report);
 }
