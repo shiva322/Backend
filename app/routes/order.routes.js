@@ -15,4 +15,6 @@ module.exports = (app) => {
     app.get('/order/:User', order.findAll);
 
     app.post('/order/report', order.report);
+    app.post('/order/report/:sorttype', order.sortBy);
+
 }

@@ -367,6 +367,31 @@ exports.report = (req, res) => {
 });
 };
 
+
+
+exports.sortBy = (req, res) => {
+
+    //db.getCollection('menus').find({Category:"Main Course"}).sort({Name:1})
+var query = Order.find({"createdAt":{$gte:req.body.fromDate,$lte:req.body.toDate}});
+//console.log(req.params.sorttype);
+var s = req.params.sorttype;
+
+if(s=="OrderTime"){
+
+var sorted = query.sort({"createdAt":1})
+query.exec(function(error, docs){
+  res.send(docs);
+});
+}
+else if(s=="FulfillmentTime"){
+var sorted = query.sort({"FulfillmentStartTime":1})
+query.exec(function(error, docs){
+  res.send(docs);
+});
+}
+
+};
+
 exports.findAll = (req, res) => {
 
     if(!req.params.User) {
