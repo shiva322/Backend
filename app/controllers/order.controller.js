@@ -1,5 +1,6 @@
 const Order = require('../models/order.model.js');
 const Cart = require('../models/cart.model.js');
+const Menu = require('../models/menu.model.js');
 var moment = require('moment');
 var nodemailer = require('nodemailer');
 var ejs = require("ejs");
@@ -248,6 +249,11 @@ exports.create = (req, res) => {
         // Save Order in the database
         order.save()
             .then(data => {
+
+            for (var i = 0; i < data.Items.length; i++){
+                Menu.update({Name:data.Items[i].Name},{$inc:{Popularity:data.Items[i].Quantity}}).exec();
+
+            }
 
                 // Use Smtp Protocol to send Email
             var smtpTransport = mailer.createTransport({
