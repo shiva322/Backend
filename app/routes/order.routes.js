@@ -15,7 +15,11 @@ module.exports = (app) => {
     app.get('/order/:User', order.findAll);
 
     app.post('/order/report', order.report);
+
     app.post('/order/report/:sorttype', order.sortBy);
-    app.get('/order/popularityreport/:categoryName', order.popularityReport)
+
+    app.get('/order/popularityreport/:categoryName', order.popularityReport);
+
+    app.post('/order/adminreset', order.orderReset);
 
 }

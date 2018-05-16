@@ -407,6 +407,7 @@ exports.popularityReport = (req, res) => {
     });
 };
 
+
 exports.findAll = (req, res) => {
 
     if(!req.params.User) {
@@ -423,5 +424,20 @@ exports.findAll = (req, res) => {
     });
 });
 };
+
+exports.orderReset = (req, res) => {
+    
+    console.log("Inside Order Reset");
+    Order.remove({})
+        .then(orders => {
+        Menu.updateMany({},{$set:{Popularity:0.0}}).exec();
+        res.send("Successfully Deleted");
+}).catch(err => {
+        res.status(500).send({
+        message: err.message || "Some error occurred while retrieving Orders."
+    });
+});
+};
+
 
 
