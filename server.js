@@ -78,23 +78,6 @@ function reminder(callback) {
 
             });
 
-       			// console.log(data[i].User);
-	         //    var mail = {
-	         //        from: "CMPE 277 Restaurant<cmpe277group@gmail.com>",
-	         //        to: data[i].User,
-	         //        subject: "Bay Leaf Restaurant - Order Pickup Reminder",
-	         //        text: "Please find the below order details",
-	         //        html: "<b>Reminder from Bay Leaf to pickup your order.</b><s> Your Order Id is '+data[i].User+'</s>"
-	         //    }
-
-	         //    smtpTransport.sendMail(mail, function(error, response){
-	         //        if(error){
-	         //            console.log(error);
-	         //        }else{
-	         //            console.log("Message sent: " + response.message);
-	         //        }
-	         //        smtpTransport.close();
-	         //    });
 				}
     }
 	});
@@ -110,6 +93,33 @@ function wait10min(){
 
 reminder(wait10min);
 
+
+
+function reminder1(callback) {
+            
+        d1 = new Date();
+        d2 = moment(d1).add(1,'minutes').toDate();
+        order.findOneAndUpdate({"PickupTime":{$gt:d1,$lt:d2}},{Status:"Fulfilled"}).exec().then(data=> {
+            console.log("Fulfilled",data);
+
+});
+   
+    order.findOneAndUpdate({"FulfillmentStartTime":{$gt:d1,$lt:d2}},{Status:"Being-Prepared"}).exec().then(data=> {
+            console.log("Being-Prepared",data);
+
+});
+        
+    
+        callback();
+}
+function wait1min(){
+    setTimeout(function(){
+        reminder1(wait1min);
+    }, 60000);
+}
+
+reminder1(wait1min);
+
 // define a simple route
 app.get('/', (req, res) => {
     res.json({"message": "Welcome to app"});
@@ -118,7 +128,7 @@ app.get('/', (req, res) => {
 require('./app/routes/menu.routes.js')(app);
 require('./app/routes/cart.routes.js')(app);
 require('./app/routes/order.routes.js')(app);
-require('./app/routes/orderlist.routes.js')(app);
+require('./app/routes/rating.routes.js')(app);
 
 app.set('port', (process.env.PORT || 3000));
 
