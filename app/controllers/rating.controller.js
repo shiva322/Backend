@@ -79,7 +79,7 @@ exports.findAll = (req, res) => {
             message: "User or MenuID cannot be empty"
         });
     }
-    Rating.find({User:req.params.User, MenuID: req.params.MenuID})
+    Rating.findOne({User:req.params.User, MenuID: req.params.MenuID})
         .then(rating => {
         res.send(rating);
 }).catch(err => {
