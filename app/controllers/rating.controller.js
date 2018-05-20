@@ -72,6 +72,21 @@ exports.create = (req, res) => {
     
 };
 
+exports.findAll = (req, res) => {
 
+    if(!req.params.User && !req.params.MenuID) {
+        return res.status(400).send({
+            message: "User or MenuID cannot be empty"
+        });
+    }
+    Rating.find({User:req.params.User, MenuID: req.params.MenuID})
+        .then(rating => {
+        res.send(rating);
+}).catch(err => {
+        res.status(500).send({
+        message: err.message || "Some error occurred while retrieving Orders."
+    });
+});
+};
 
 
