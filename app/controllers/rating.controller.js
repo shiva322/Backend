@@ -13,8 +13,18 @@ exports.create = (req, res) => {
     rating.save()
     .then(data => {
         Rating.aggregate([
-        
-        {"$avg":{"average":"$Rating"}}
+        {
+            $match: {
+                MenuID: rating.MenuID
+            }
+        }, {
+            $group: {
+                _id: null,
+                average_rating: {
+                    $avg: "$Rating"
+                }
+            }
+        }
     ]);
         res.send(data);
 
