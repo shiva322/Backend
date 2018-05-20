@@ -8,7 +8,8 @@ const MenuSchema = mongoose.Schema({
 	Calories : Number,
 	Preparationtime: Number,
 	Quantity:Number,
-	Popularity:Number
+	Popularity:Number,
+	Rating:Number
 }, {
     timestamps: true
 });

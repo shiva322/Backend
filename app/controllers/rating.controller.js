@@ -26,7 +26,7 @@ exports.create = (req, res) => {
             }
         }
     ]).exec().then(data=>{
-        console.log(data[0].average_rating);
+    //        console.log(data[0].average_rating);
 
         Menu.update({ID:rating.MenuID}, { $set: { Rating: data[0].average_rating }}).exec();
 
